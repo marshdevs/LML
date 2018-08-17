@@ -4,7 +4,7 @@ My notebook as I work through the Stanford - Coursera Machine Learning course (A
 other machine learning resources I've used for school, work, personal projects, and the fiddling I've 
 used them for.
 
-(learning machine learning - lML).
+(learning machine learning - LML).
 
 * [Coursera: Machine Learning](https://www.coursera.org/learn/machine-learning)
 * [K-Means Clustering](https://datasciencelab.wordpress.com/2013/12/27/finding-the-k-in-k-means-clustering/)

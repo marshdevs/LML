@@ -2,7 +2,9 @@
 
 My notebook as I work through the Stanford - Coursera Machine Learning course (Andrew Ng), and of various 
 other machine learning resources I've used for school, work, personal projects, and the fiddling I've 
-used them for (learning machine learning - machine (learning)^2).
+used them for.
+
+(learning machine learning - lML).
 
 * [Coursera: Machine Learning](https://www.coursera.org/learn/machine-learning)
 * [K-Means Clustering](https://datasciencelab.wordpress.com/2013/12/27/finding-the-k-in-k-means-clustering/)

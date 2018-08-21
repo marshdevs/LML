@@ -1,8 +1,7 @@
 # LML - Learning Machine Learning
 
 My notebook as I work through the Stanford - Coursera Machine Learning course (Andrew Ng), and of various 
-other machine learning resources I've used for school, work, personal projects, and the fiddling I've 
-used them for.
+other machine learning resources I've used for school, work, personal projects, and extra fiddling.
 
 (learning machine learning - LML).
 

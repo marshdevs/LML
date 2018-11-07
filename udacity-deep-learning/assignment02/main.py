@@ -141,6 +141,37 @@ class Tensor:
           print("Validation accuracy: %.1f%%" % self.accuracy(self.valid_prediction.eval(), self.valid_labels))
       print("Test accuracy: %.1f%%" % self.accuracy(self.test_prediction.eval(), self.test_labels))
 
+  def build_relu(self, batch_size, hidden_nodes):
+    with self.graph.as_default():
+      # Input data. For the training data, we use a placeholder that will be fed
+      # at run time with a training minibatch.
+      tf_train_dataset = tf.placeholder(tf.float32,shape=(batch_size, self.image_size * self.image_size))
+      tf_train_labels = tf.placeholder(tf.float32, shape=(batch_size, self.num_labels))
+      tf_valid_dataset = tf.constant(self.valid_dataset)
+      tf_test_dataset = tf.constant(self.test_dataset)
+
+      # Variables.
+      weights1 = tf.Variable(tf.truncated_normal([self.image_size * self.image_size, hidden_nodes]))
+      biases1 = tf.Variable(tf.zeros([hidden_nodes]))
+      weights2 = tf.Variable(tf.truncated_normal([hidden_nodes, self.num_labels]))
+      biases2 = tf.Variable(tf.zeros([self.num_labels]))
+
+      # Training computation.
+      logits = self.forward_prop(tf_train_dataset, weights1, biases1, weights2, biases2)
+      self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=logits))
+
+      # Optimizer.
+      self.optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(self.loss)
+
+      # Predictions for the training, validation, and test data.
+      self.train_prediction = tf.nn.softmax(logits)
+      self.valid_prediction = tf.nn.softmax(self.forward_prop(tf_valid_dataset, weights1, biases1, weights2, biases2))
+      self.test_prediction = tf.nn.softmax(self.forward_prop(tf_test_dataset, weights1, biases1, weights2, biases2))
+      return tf_train_dataset, tf_train_labels
+
+  def forward_prop(self, inputs, weights1, biases1, weights2, biases2):
+    return tf.matmul(tf.nn.relu(tf.matmul(inputs, weights1)) + biases1, weights2) + biases2
+
   def accuracy(self, predictions, labels):
     return (100.0 * np.sum(np.argmax(predictions, 1) == np.argmax(labels, 1)) / predictions.shape[0])
 
@@ -161,11 +192,14 @@ def main():
   train_subset = 10000
   num_steps = 3001
   batch_size = 128
+  hidden_nodes = 1024
   tensor = Tensor(image_size, num_labels, train_subset, train_dataset,
     train_labels, valid_dataset, valid_labels, test_dataset, test_labels)
   # tensor.build_graph()
   # tensor.run_graph(num_steps)
-  tf_train_dataset, tf_train_labels = tensor.build_stochastic(batch_size)
+  # tf_train_dataset, tf_train_labels = tensor.build_stochastic(batch_size)
+  # tensor.run_stochastic(batch_size, num_steps, tf_train_dataset, tf_train_labels)
+  tf_train_dataset, tf_train_labels = tensor.build_relu(batch_size, hidden_nodes)
   tensor.run_stochastic(batch_size, num_steps, tf_train_dataset, tf_train_labels)
 
 

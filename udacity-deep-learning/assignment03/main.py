@@ -101,10 +101,16 @@ class Tensor():
       # Training computation.
       logits = self.forward_prop(tf_train_dataset, weights1, biases1, weights2, biases2)
       self.loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=tf_train_labels, logits=logits))
+
+      # L2 norm
       self.loss += l2_norm_multiplier * tf.nn.l2_loss(weights1) + l2_norm_multiplier * tf.nn.l2_loss(weights2)
 
+      # Learning rate decay
+      global_step = tf.Variable(0)
+      learning_rate = tf.train.exponential_decay(0.5, global_step, 10000, 0.96)
+
       # Optimizer.
-      self.optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(self.loss)
+      self.optimizer = tf.train.GradientDescentOptimizer(0.5).minimize(self.loss, global_step=global_step)
 
       # Predictions for the training, validation, and test data.
       self.train_prediction = tf.nn.softmax(logits)
@@ -115,6 +121,7 @@ class Tensor():
   def forward_prop(self, inputs, weights1, biases1, weights2, biases2):
     return tf.matmul(tf.nn.relu(tf.matmul(inputs, weights1)) + biases1, weights2) + biases2
 
+  # Dropout during training
   def forward_prop_dropout(self, inputs, weights1, biases1, weights2, biases2):
     return tf.matmul(tf.nn.dropout(tf.nn.relu(tf.matmul(inputs, weights1)) + biases1, 0.5), weights2) + biases2
 
